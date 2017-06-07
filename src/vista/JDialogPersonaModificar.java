@@ -5,6 +5,7 @@
  */
 package vista;
 
+import algoritmos.genericos.Ventana;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import modelo.Persona;
@@ -27,6 +28,18 @@ public class JDialogPersonaModificar extends javax.swing.JDialog {
         this.txtSecNombre.setText(secNombre);
         this.txtApPaterno.setText(apPaterno);
         this.txtApMaterno.setText(apMaterno);
+        //---Configurar posiciòn y tamaño de ventana
+        this.setLocationRelativeTo(parent);//Que se ponga la ventana en la localizaciòn del padre
+        this.setResizable(false);
+        //---Agregar las validaciones
+        Ventana validacion = new Ventana();
+        //validacion.soloLetras(txtRut);
+        validacion.soloLetras(this.txtNombre);
+        validacion.soloLetras(this.txtSecNombre);
+        validacion.soloLetras(this.txtApPaterno);
+        validacion.soloLetras(this.txtApMaterno);
+        Ventana boton = new Ventana();
+        boton.botonModificar(botonModificar);
     }
 
     JDialogPersonaModificar(JFrame jFrame, boolean b) {

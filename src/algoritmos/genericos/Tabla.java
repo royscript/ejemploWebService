@@ -15,13 +15,19 @@ import javax.swing.table.TableCellRenderer;
  * @author Roy
  */
 public class Tabla {
-
+    
+    public String familiaLetra = "Segoe UI Semilight";
+    public int tipoLetra = 1;
+    public int tamanoLetra = 16;
+    
     public Tabla() {
     }
     
     public void generarTablaDao(javax.swing.JTable tabla, String[] columnas,final Class[] tiposColumnas){
+        //COn el siguiente codigo activamos que se puedan mostrar imagenes en el JTable por medio de JLabel
+        tabla.setDefaultRenderer(Object.class, new ImagenTabla());
         //Ordena tabla de forma automática sorting
-        tabla.setAutoCreateRowSorter(true);
+        //tabla.setAutoCreateRowSorter(true);
         // Defino el TableModel y le indico los datos y nombres de columnas
         tabla.setModel(new javax.swing.table.DefaultTableModel(
                 null,
@@ -60,6 +66,33 @@ public class Tabla {
               //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             //}
         });
+         
+         
+         //---------------------------Agregar estilo a la tabla----------------------
+         
+         //-----Cabecera----------
+         // cambia el tipo de letra del encabezado de la tabla
+        //tabla.getTableHeader().setFont(new Font(this.familiaLetra, this.tipoLetra, this.tamanoLetra)); 
+        // cambia el fondo del encabezado de la tabla
+        //tabla.getTableHeader().setBackground(new java.awt.Color(51, 153, 255));
+        //tabla.getTableHeader().setForeground(new java.awt.Color(255, 255, 255));
+        // cambia el color de la letra del encabezado de la tabla
+       
+        //------------------------
+        
+        //------Body--------------
+        // cambiar la fuente de los datos de la tabla
+        //tabla.setFont(new Font(this.familiaLetra, this.tipoLetra, this.tamanoLetra));
+        //tabla.setDefaultRenderer(Object.class, new cambiarColorFilasTabla());
+        //------------------------
+         SeleccionadorDeColumnasJTable tcs = new SeleccionadorDeColumnasJTable();
+         tcs.install(tabla);
+         //-----------Disminuir el tamaño de las ultimas columnas (editar y eliminar)---------
+        int cantidadDeColumnas = 0;
+        cantidadDeColumnas = tabla.getColumnCount();
+        tabla.getColumnModel().getColumn(cantidadDeColumnas-2).setMaxWidth(20);
+        tabla.getColumnModel().getColumn(cantidadDeColumnas-1).setMaxWidth(20);
+        //-----------------------------------------------------------------------------------
     }
     public void BotonSiguiente(javax.swing.JTextField txtPaginaActual,javax.swing.JLabel labelTotalPaginas){
         int paginaActual = Integer.parseInt(txtPaginaActual.getText());

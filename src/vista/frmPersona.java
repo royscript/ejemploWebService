@@ -17,15 +17,19 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Persona;
 import algoritmos.genericos.Ventana;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 /**
  *
  * @author Roy
  */
-public class frmPersona extends javax.swing.JFrame {
+public final class frmPersona extends javax.swing.JFrame {
     /**
      * Variables
      */
@@ -43,7 +47,15 @@ public class frmPersona extends javax.swing.JFrame {
         personalizarGrilla();
         Ventana ventana = new Ventana();
         ventana.soloNumeros(this.txtPaginaActual);
-        ventana.iniciarVentanaMediana();
+        //------------Localizacion ventana------------
+        Toolkit miPantalla = Toolkit.getDefaultToolkit();
+        Dimension tamanoPantalla = miPantalla.getScreenSize();
+        int alturaPantalla = tamanoPantalla.height;
+        int anchoPantalla = tamanoPantalla.width;
+        setLocation(anchoPantalla/4, alturaPantalla/4);
+        //-----------/Localizacion ventana------------
+        ventana.botonAgregar(botonAgregar);
+        ventana.botonExcel(this.botonExtraerExcel);
         cargar_lista_de_personas();
     }
     
@@ -71,10 +83,35 @@ public class frmPersona extends javax.swing.JFrame {
             java.lang.String.class,
             java.lang.String.class,
             java.lang.String.class,
-            JButton.class, // <- noten que aquí se especifica que la última columna es un botón
-            JButton.class
+            JLabel.class, // <- noten que aquí se especifica que la última columna es un botón
+            JLabel.class
         };
+        //Ejecutamos métodos para inicializar la tabla 
         tabla.generarTablaDao(grillaPersona, columnas, tiposColumnas);
+        //Agregamos el evento que quede a la escucha si se hace click en alguna cabecera de columna para ordenar ascendente o descendente
+        this.grillaPersona.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columna = grillaPersona.columnAtPoint(e.getPoint());
+                //JOptionPane.showMessageDialog(null, "Isiste click en una columna "+columna);
+                if(columna==0){//Si hizo click en la cabecera de la columna 0 sucederá lo siguiente 
+                    
+                }else if(columna==1){//Si hizo click en la cabecera de la columna 1 sucederá lo siguiente 
+                    
+                }else if(columna==2){//Si hizo click en la cabecera de la columna 2 sucederá lo siguiente 
+                    
+                }else if(columna==3){//Si hizo click en la cabecera de la columna 3 sucederá lo siguiente 
+                    
+                }else if(columna==4){//Si hizo click en la cabecera de la columna 4 sucederá lo siguiente 
+                    
+                }else if(columna==5){//Si hizo click en la cabecera de la columna 5 sucederá lo siguiente 
+                    
+                }
+            }
+        });
+        
+        
+        
         /**
          * Por último, agregamos un listener que nos permita saber cuando fue pulsada la celda que contiene el botón.
          * Noten que estamos capturando el clic sobre JTable, no el clic sobre el JButton. Esto también implica que en 
@@ -87,9 +124,11 @@ public class frmPersona extends javax.swing.JFrame {
         this.grillaPersona.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                int cantidadDeColumnas = 0;
+                cantidadDeColumnas = grillaPersona.getColumnCount();
                 int fila = grillaPersona.rowAtPoint(e.getPoint());
                 int columna = grillaPersona.columnAtPoint(e.getPoint());
-                if(columna==6){//La columna 6 corresponde a editar
+                if(columna==(cantidadDeColumnas-2)){//La ante penúltima columna corresponde a editar
                     int id = (Integer) grillaPersona.getModel().getValueAt(fila, 0);
                     String rut = (String) grillaPersona.getModel().getValueAt(fila, 1);
                     String nombres = (String) grillaPersona.getModel().getValueAt(fila, 2);
@@ -114,9 +153,9 @@ public class frmPersona extends javax.swing.JFrame {
                     });
                     //--------------------------/Modificar-----------------------------------
                 }
-                if(columna==7){//La columna 7 corresponde a eliminar
+                if(columna==(cantidadDeColumnas-1)){//La última columna corresponde a eliminar
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < grillaPersona.getModel().getColumnCount(); i++) {
+                    for (int i = 0; i < grillaPersona.getModel().getColumnCount()-2; i++) {//Se le resta 2 para que no tome las columnas de los iconos modificar y eliminar
                         if (!grillaPersona.getModel().getColumnClass(i).equals(JButton.class)) {
                             sb.append("\n").append(grillaPersona.getModel().getColumnName(i)).append(": ").append(grillaPersona.getModel().getValueAt(fila, i));
                         }
@@ -138,7 +177,6 @@ public class frmPersona extends javax.swing.JFrame {
     
     
     void cargar_lista_de_personas() throws IOException{
-        JButton etiqueta;  
         int cantidadRegistrosPorPagina = Integer.parseInt((String) this.comboBoxCantidadRegistrosPorPagina.getSelectedItem());
         //Si se abre por primera vez, y el campo de texto correspondiente al número
         // de página esta vacio, se mostrará desde la página 1
@@ -154,8 +192,6 @@ public class frmPersona extends javax.swing.JFrame {
         dtm.setRowCount(0);
         if(personas!=null){//Si el objeto no es null imprimirá los valores
             for (Persona persona : personas) {
-                etiqueta = new JButton("Editar");
-                etiqueta.setName("editar");
                 dtm.addRow(new Object[]{
                     persona.getId(),
                     persona.getRut(),
@@ -163,8 +199,8 @@ public class frmPersona extends javax.swing.JFrame {
                     persona.getSecNombre(),
                     persona.getApPaterno(),
                     persona.getApMaterno(),
-                    etiqueta,
-                    new JButton("Eliminar")
+                    new JLabel(new ImageIcon(getClass().getResource("/imagenes/edit.png"))),
+                    new JLabel(new ImageIcon(getClass().getResource("/imagenes/delete.png")))
                 });
             }
         }
@@ -185,18 +221,20 @@ public class frmPersona extends javax.swing.JFrame {
         txtBuscar = new javax.swing.JTextField();
         botonBuscar = new javax.swing.JButton();
         botonAgregar = new javax.swing.JButton();
-        txtPaginaActual = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        botonIr = new javax.swing.JButton();
-        labelTotalPaginas = new javax.swing.JLabel();
-        comboBoxCantidadRegistrosPorPagina = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        botonSiguiente = new javax.swing.JButton();
-        botonAnterior = new javax.swing.JButton();
         botonExtraerExcel = new javax.swing.JButton();
         labelCantidadTotalDeRegistros = new javax.swing.JLabel();
+        botonIr = new javax.swing.JButton();
+        labelTotalPaginas = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        txtPaginaActual = new javax.swing.JTextField();
+        botonSiguiente = new javax.swing.JButton();
+        botonAnterior = new javax.swing.JButton();
+        comboBoxCantidadRegistrosPorPagina = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Persona");
+        setResizable(false);
 
         grillaPersona = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex){
@@ -214,6 +252,7 @@ public class frmPersona extends javax.swing.JFrame {
 
             }
         ));
+        grillaPersona.setDoubleBuffered(true);
         jScrollPane1.setViewportView(grillaPersona);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parametros de Búsqueda"));
@@ -253,14 +292,9 @@ public class frmPersona extends javax.swing.JFrame {
             }
         });
 
-        txtPaginaActual.setText("1");
-        txtPaginaActual.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtPaginaActualKeyTyped(evt);
-            }
-        });
+        botonExtraerExcel.setText("Excel");
 
-        jLabel1.setText("/");
+        labelCantidadTotalDeRegistros.setText("Cantidad de Registros :");
 
         botonIr.setText("Ir");
         botonIr.addActionListener(new java.awt.event.ActionListener() {
@@ -271,14 +305,14 @@ public class frmPersona extends javax.swing.JFrame {
 
         labelTotalPaginas.setText("XXX");
 
-        comboBoxCantidadRegistrosPorPagina.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "5", "10", "20", "40" }));
-        comboBoxCantidadRegistrosPorPagina.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboBoxCantidadRegistrosPorPaginaActionPerformed(evt);
+        jLabel1.setText("/");
+
+        txtPaginaActual.setText("1");
+        txtPaginaActual.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPaginaActualKeyTyped(evt);
             }
         });
-
-        jLabel2.setText("Registros por página:");
 
         botonSiguiente.setText("Siguiente");
         botonSiguiente.addActionListener(new java.awt.event.ActionListener() {
@@ -294,9 +328,14 @@ public class frmPersona extends javax.swing.JFrame {
             }
         });
 
-        botonExtraerExcel.setText("Excel");
+        comboBoxCantidadRegistrosPorPagina.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10", "20", "40" }));
+        comboBoxCantidadRegistrosPorPagina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxCantidadRegistrosPorPaginaActionPerformed(evt);
+            }
+        });
 
-        labelCantidadTotalDeRegistros.setText("Cantidad de Registros :");
+        jLabel2.setText("Registros por página:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -321,20 +360,20 @@ public class frmPersona extends javax.swing.JFrame {
                         .addComponent(labelTotalPaginas)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonIr)
+                        .addGap(29, 29, 29)
+                        .addComponent(labelCantidadTotalDeRegistros)
+                        .addGap(56, 56, 56))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(54, 54, 54)
+                                .addGap(548, 548, 548)
                                 .addComponent(botonExtraerExcel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(18, 18, 18)
                                 .addComponent(botonAgregar))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(73, 73, 73)
-                                .addComponent(labelCantidadTotalDeRegistros)))
-                        .addGap(86, 86, 86))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 923, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(21, 21, 21)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 923, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(32, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -344,11 +383,11 @@ public class frmPersona extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(botonAgregar)
+                    .addComponent(botonAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botonExtraerExcel))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtPaginaActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -359,7 +398,7 @@ public class frmPersona extends javax.swing.JFrame {
                     .addComponent(botonSiguiente)
                     .addComponent(botonAnterior)
                     .addComponent(labelCantidadTotalDeRegistros))
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         pack();

@@ -5,6 +5,7 @@
  */
 package vista;
 
+import algoritmos.genericos.Ventana;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,13 @@ public class JDialogPersonaCrear extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(parent);//Que se ponga la ventana en la localizaciòn del padre
         this.setResizable(false);
+        Ventana boton = new Ventana();
+        boton.botonGuardar(botonGuardar);
+        //Validaciones
+        boton.soloLetras(this.txtNombres);
+        boton.soloLetras(this.txtSecNombre);
+        boton.soloLetras(this.txtApPaterno);
+        boton.soloLetras(this.txtApMaterno);
     }
 
     /**
